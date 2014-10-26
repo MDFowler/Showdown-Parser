@@ -16,18 +16,28 @@ currentPoke = 0 #Index for current pokemon
 sendMessage = []
 
 if pov:
-	sendMessage = "Go!"
-	sendSplit = 2
+	sendMessage.append("Go!")
+	sendSplit = 1
 else:
 	sendMessage.append(name)
 	sendMessage.append( "sent" )
 	sendMessage.append( "out" )
-	sendSplit = 3
+	#Takes into account names with spaces
+	sendSplit = len(name.split(' ')) + len(sendMessage) - 1
+
+print "sendMessage =", sendMessage
+print "sendSplit =", sendSplit
+print "len(name).split =", len(name.split(' '))
 
 with open(filename, "r") as infile:
 	for line in infile:
 		#Looks for list of name's pokemon and stores them
-		if name + "'s" == line.split(' ')[0]:
+		#if name + "'s" == line.split(' ')[0]:
+		match = True
+		for i, j in zip( name + "'s", line ):
+			if i != j:
+				match = False
+		if match:
 			pokes.append( Poke(line.split(' ')[2]) )
 			pokes.append( Poke(line.split(' ')[4]) )
 			pokes.append( Poke(line.split(' ')[6]) )
@@ -36,10 +46,15 @@ with open(filename, "r") as infile:
 			pokes.append( Poke(line.split(' ')[12]) )
 			#Removes \r\n from last pokemon
 			pokes[5].name = pokes[5].name[:len(pokes[5].name)-2]
+			match = False
+			print "Got the team!"
+
+		#print line.split(' ')[0:sendSplit]
 		
 		#Find the current poke. If the pattern maches,
 		#it's a switch line.
-		elif sendMessage == line.split(' ')[0:sendSplit]:
+		#print sendMessage, "==", line.split(' ')[0:sendSplit]
+		if sendMessage == line.split(' ')[0:sendSplit]:
 			curr = 0
 			#Go through each word looking for the name of a pokemon
 			for word in line.split(' '):
