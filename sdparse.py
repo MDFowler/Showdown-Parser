@@ -48,16 +48,21 @@ with open(filename, "r") as infile:
 		if len(line.split(' ')) > len(name.split(' '))-1:
 			if name.split(' ')[len(name.split(' '))-1] + "'s" == \
 			line.split(' ')[len(name.split(' '))-1]:
-				pokes.append( Poke(line.split(' ')[2]) )
-				pokes.append( Poke(line.split(' ')[4]) )
-				pokes.append( Poke(line.split(' ')[6]) )
-				pokes.append( Poke(line.split(' ')[8]) )
-				pokes.append( Poke(line.split(' ')[10]) )
-				pokes.append( Poke(line.split(' ')[12]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' ')) +1]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' ')) +3]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' ')) +5]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' ')) +7]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' ')) +9]) )
+				pokes.append( 
+					Poke(line.split(' ')[len(name.split(' '))+11]) )
 				#Removes \r\n from last pokemon
 				pokes[5].name = pokes[5].name[:len(pokes[5].name)-2]
 				match = False
-				print "Got the team!"
 		
 		# Find the current poke. If the pattern maches,
 		# it's a switch line. First check looks for the
@@ -73,6 +78,7 @@ with open(filename, "r") as infile:
 				for e in pokes:
 					# Checks for names without nicknames
 					if e.name + "!\r\n" == word:
+						print "Switched to", e.name
 						currentPoke = curr
 						break
 					# Names found like this mean there is a
