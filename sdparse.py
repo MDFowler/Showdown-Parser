@@ -1,5 +1,7 @@
 class Poke():
 	name = ""
+	hasNick = False
+	nick = ""
 	moves = []
 	item = ""
 	ability = ""
@@ -9,15 +11,18 @@ class Poke():
 
 pokes = []
 name = raw_input( "Who do you want to track: " )
-pov = bool( raw_input( "Does that player have POV? Leave blank for false: " ) )
+pov = bool( raw_input( 
+	"Does that player have POV? Leave blank for false: " ) )
 team = raw_input( "What team is the player on: " )
 filename = raw_input( "Enter file to read: " )
 currentPoke = 0 # Index for current pokemon
 sendMessage = []
+attMessage = []
 
 if pov:
 	sendMessage.append("Go!")
 	sendSplit = 1
+	attMessage.append("")
 else:
 	sendMessage.append(name)
 	sendMessage.append( "sent" )
@@ -53,23 +58,37 @@ with open(filename, "r") as infile:
 				pokes[5].name = pokes[5].name[:len(pokes[5].name)-2]
 				match = False
 				print "Got the team!"
-
-		#print line.split(' ')[0:sendSplit]
 		
 		# Find the current poke. If the pattern maches,
-		# it's a switch line.
-		#print sendMessage, "==", line.split(' ')[0:sendSplit]
+		# it's a switch line. First check looks for the
+		# matching opening line. Second check looks for
+		# the name of the pokemon.
 		if sendMessage == line.split(' ')[0:sendSplit]:
+			# Used to index current pokemon
 			curr = 0
+			# Used to index name of pokemon in case of nicknames
+			indexOfName = 0 
 			# Go through each word looking for the name of a pokemon
 			for word in line.split(' '):
 				for e in pokes:
-					# Both checks are needed in case of nicknames
-					if e.name + "!\r\n" == word or \
-					"(" + e.name +")!\r\n" == word:
+					# Checks for names without nicknames
+					if e.name + "!\r\n" == word:
 						currentPoke = curr
-						print "Found! at", currentPoke
+						break
+					# Names found like this mean there is a
+					# nickname somewhere
+					elif "(" + e.name +")!\r\n" == word:
+						if not e.hasNick:
+							for i in range(sendSplit, indexOfName):
+								e.nick += line.split(' ')[i] + " "
+							# Removes trailing whitespace
+							e.nick = e.nick[0:len(e.nick)-1]
+							e.hasNick = True
+						currentPoke = curr
 						break
 					else:
 						curr += 1
 				curr = 0
+				indexOfName += 1
+
+		# Looks to see if the current pokemon uses a new move 
