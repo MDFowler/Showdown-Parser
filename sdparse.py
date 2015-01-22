@@ -13,9 +13,9 @@ pov = bool( raw_input(
 	"Does that player have POV? Leave blank for false: " ) )
 team = raw_input( "What team is the player on: " )
 filename = raw_input( "Enter file to read: " )
-currentPoke = 0 # Index for current pokemon
-sendMessage = []
-attMessage = []
+currentPoke = 0 # Index for current Pokemon
+sendMessage = [] # Message that is printed when a Pokemon is sent out
+attMessage = [] # Message that is printed when a Pokemon attacks.
 
 if pov:
 	sendMessage.append("Go!")
