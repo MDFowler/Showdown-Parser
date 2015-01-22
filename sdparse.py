@@ -10,6 +10,7 @@ class Poke():
 		self.ability = "unknown"
 
 pokes = []
+replay = raw_input( "Please enter the url of the replay here: " )
 name = raw_input( "Who do you want to track: " )
 pov = bool( raw_input( 
 	"Does that player have POV? Leave blank for false: " ) )
@@ -118,6 +119,7 @@ filename = "./" + team + "/" + name + ".txt"
 if os.path.isfile(filename):
 	with open(filename, 'a') as outfile:
 		outfile.write("\n\n====================\n\n")
+		outfile.write("Replay - " + replay + "\n\n")
 		for e in pokes:
 			if e.hasNick:
 				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
@@ -142,6 +144,7 @@ if os.path.isfile(filename):
 				outfile.write("- unkown\n\n")
 else:
 	with open(filename, 'w') as outfile:
+		outfile.write("Replay - " + replay + "\n\n")
 		for e in pokes:
 			if e.hasNick:
 				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
