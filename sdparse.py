@@ -1,3 +1,5 @@
+import os.path
+
 class Poke():
 	def __init__(self, name):
 		self.name = name
@@ -111,3 +113,54 @@ with open(filename, "r") as infile:
 					newMove = line.split(' ')[indexOfUsed:]
 					newMove = ' '.join(newMove).rstrip()
 					pokes[currentPoke].moves.append(newMove)
+
+filename = "./" + team + "/" + name + ".txt"
+if os.path.isfile(filename):
+	with open(filename, 'a') as outfile:
+		outfile.write("\n\n====================\n\n")
+		for e in pokes:
+			if e.hasNick:
+				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
+			else:
+				outfile.write(e.name + " @ " + e.item + "\n")
+			outfile.write("Ability: " + e.ability + "\n")
+			if len(e.moves) >= 1:
+				outfile.write("- " + e.moves[0] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 2:
+				outfile.write("- " + e.moves[1] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 3:
+				outfile.write("- " + e.moves[2] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 4:
+				outfile.write("- " + e.moves[3] + "\n\n")
+			else:
+				outfile.write("- unkown\n\n")
+else:
+	with open(filename, 'w') as outfile:
+		for e in pokes:
+			if e.hasNick:
+				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
+			else:
+				outfile.write(e.name + " @ " + e.item + "\n")
+			outfile.write("Ability: " + e.ability + "\n")
+			if len(e.moves) >= 1:
+				outfile.write("- " + e.moves[0] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 2:
+				outfile.write("- " + e.moves[1] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 3:
+				outfile.write("- " + e.moves[2] + "\n")
+			else:
+				outfile.write("- unkown\n")
+			if len(e.moves) >= 4:
+				outfile.write("- " + e.moves[3] + "\n\n")
+			else:
+				outfile.write("- unkown\n\n")
