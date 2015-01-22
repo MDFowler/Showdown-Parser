@@ -129,19 +129,19 @@ if os.path.isfile(filename):
 			if len(e.moves) >= 1:
 				outfile.write("- " + e.moves[0] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 2:
 				outfile.write("- " + e.moves[1] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 3:
 				outfile.write("- " + e.moves[2] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 4:
 				outfile.write("- " + e.moves[3] + "\n\n")
 			else:
-				outfile.write("- unkown\n\n")
+				outfile.write("- unknown\n\n")
 else:
 	with open(filename, 'w') as outfile:
 		outfile.write("Replay - " + replay + "\n\n")
@@ -154,16 +154,16 @@ else:
 			if len(e.moves) >= 1:
 				outfile.write("- " + e.moves[0] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 2:
 				outfile.write("- " + e.moves[1] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 3:
 				outfile.write("- " + e.moves[2] + "\n")
 			else:
-				outfile.write("- unkown\n")
+				outfile.write("- unknown\n")
 			if len(e.moves) >= 4:
 				outfile.write("- " + e.moves[3] + "\n\n")
 			else:
-				outfile.write("- unkown\n\n")
+				outfile.write("- unknown\n\n")
