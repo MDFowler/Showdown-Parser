@@ -4,8 +4,8 @@ class Poke():
 		self.hasNick = False
 		self.nick = ""
 		self.moves = []
-		self.item = ""
-		self.ability = ""
+		self.item = "unknown"
+		self.ability = "unknown"
 
 pokes = []
 name = raw_input( "Who do you want to track: " )
@@ -107,13 +107,7 @@ with open(filename, "r") as infile:
 					indexOfUsed += 1
 					if e == "used":
 						break
-				if ' '.join(line.split(' ')[indexOfUsed:]) not in pokes[currentPoke].moves:
+				if ' '.join(line.split(' ')[indexOfUsed:]).rstrip() not in pokes[currentPoke].moves:
 					newMove = line.split(' ')[indexOfUsed:]
-					newMove = ' '.join(newMove)
-					# TODO: remove the !\r\n from moves before
-					#       adding it to the text file. Maybe
-					#       have a "cleansing" function before
-					#		the output. Or fix the above if so
-					#		that it can find "Knock Off" instead
-					#		of "Knock Off!\r\n"
+					newMove = ' '.join(newMove).rstrip()
 					pokes[currentPoke].moves.append(newMove)
