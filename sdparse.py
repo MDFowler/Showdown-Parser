@@ -10,7 +10,6 @@ class Poke():
 		self.ability = "unknown"
 
 pokes = []
-#replay = raw_input( "Please enter the url of the replay here: " )
 name = raw_input( "Who do you want to track: " )
 team = raw_input( "What team is the player on: " )
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
@@ -23,8 +22,9 @@ attSplit = 0
 
 with open(filename, "r") as infile:
 	for line in infile:
-		#print line
-		# Determines if the player has POV
+		# Determines if the player has POV by looking for the phrase
+		# Battle bewtween PlayerA and PlayerB started!
+		# If we find name at index 2, then they have POV.		
 		if line.split(' ')[0:2] == ['Battle', 'between']:
 			if line.split(' ')[2] == name:
 				sendMessage.append("Go!")
@@ -103,9 +103,6 @@ with open(filename, "r") as infile:
 				indexOfName += 1
 
 		# Looks to see if the current pokemon uses a new move
-		#if ' '.join(attMessage) in line and \
-		#" used " in line:
-		# USE THE CURRENT POKE VARIABLE
 		if ' '.join(attMessage) in line and " used " in line:
 			if pokes[currentPoke].nick in line:
 				indexOfUsed = 0
