@@ -10,7 +10,7 @@ class Poke():
 		self.ability = "unknown"
 
 pokes = []
-replay = raw_input( "Please enter the url of the replay here: " )
+#replay = raw_input( "Please enter the url of the replay here: " )
 name = raw_input( "Who do you want to track: " )
 team = raw_input( "What team is the player on: " )
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
@@ -117,6 +117,10 @@ with open(filename, "r") as infile:
 					newMove = line.split(' ')[indexOfUsed:]
 					newMove = ' '.join(newMove).rstrip()
 					pokes[currentPoke].moves.append(newMove)
+
+		# Gets the replay url
+		if line.split(':')[0] == "http":
+			replay = line.rstrip()
 
 filename = "./" + team + "/" + rank + "/" + name + ".txt"
 if os.path.isfile(filename):
