@@ -12,33 +12,35 @@ class Poke():
 pokes = []
 replay = raw_input( "Please enter the url of the replay here: " )
 name = raw_input( "Who do you want to track: " )
-pov = bool( raw_input( 
-	"Does that player have POV? Leave blank for false: " ) )
 team = raw_input( "What team is the player on: " )
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
 filename = raw_input( "Enter file to read: " )
 currentPoke = 0 # Index for current Pokemon
 sendMessage = [] # Message that is printed when a Pokemon is sent out
 attMessage = [] # Message that is printed when a Pokemon attacks.
-
-if pov:
-	sendMessage.append("Go!")
-	sendSplit = 1
-	attMessage.append("")
-	attSplit = 0
-else:
-	sendMessage.append(name)
-	sendMessage.append( "sent" )
-	sendMessage.append( "out" )
-	# Takes into account names with spaces
-	sendSplit = len(name.split(' ')) + len(sendMessage) - 1
-	attMessage.append("The")
-	attMessage.append("opposing")
-	attSplit = 2
+sendSplit = 0
+attSplit = 0
 
 with open(filename, "r") as infile:
 	for line in infile:
 		#print line
+		# Determines if the player has POV
+		if line.split(' ')[0:2] == ['Battle', 'between']:
+			if line.split(' ')[2] == name:
+				sendMessage.append("Go!")
+				sendSplit = 1
+				attMessage.append("")
+				attSplit = 0
+			else:
+				sendMessage.append(name)
+				sendMessage.append( "sent" )
+				sendMessage.append( "out" )
+				# Takes into account names with spaces
+				sendSplit = len(name.split(' ')) + len(sendMessage) - 1
+				attMessage.append("The")
+				attMessage.append("opposing")
+				attSplit = 2
+
 		# Looks for list of name's pokemon and stores them.
 		# Have to make the line you check is at least as long as
 		# the player's name. Then if the player has a name with
