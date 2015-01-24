@@ -15,6 +15,7 @@ name = raw_input( "Who do you want to track: " )
 pov = bool( raw_input( 
 	"Does that player have POV? Leave blank for false: " ) )
 team = raw_input( "What team is the player on: " )
+rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
 filename = raw_input( "Enter file to read: " )
 currentPoke = 0 # Index for current Pokemon
 sendMessage = [] # Message that is printed when a Pokemon is sent out
@@ -115,7 +116,7 @@ with open(filename, "r") as infile:
 					newMove = ' '.join(newMove).rstrip()
 					pokes[currentPoke].moves.append(newMove)
 
-filename = "./" + team + "/" + name + ".txt"
+filename = "./" + team + "/" + rank + "/" + name + ".txt"
 if os.path.isfile(filename):
 	with open(filename, 'a') as outfile:
 		outfile.write("\n\n====================\n\n")
