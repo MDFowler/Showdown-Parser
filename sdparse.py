@@ -32,6 +32,38 @@ def getPokeList(line, pokes):
 	#Removes \r\n from last pokemon
 	pokes[5].name = pokes[5].name.rstrip()
 
+def setCurrentPoke(line, pokes, sendSplit):
+	# Used to index current pokemon
+	curr = 0
+	# Used to index name of pokemon in case of nicknames
+	indexOfName = 0 
+	# Go through each word looking for the name of a pokemon
+	# We go through by word instead of looking at the last word
+	# so that we can find the length of nicknames with indexOfName
+	for word in line.split(' '):
+		for e in pokes:
+			# Checks for names without nicknames but sets
+			# nick to it's own name for easier checks
+			# later on.
+			if e.name + "!\r\n" == word:
+				e.nick = e.name
+				return curr
+			# Names found like this mean there is a
+			# nickname somewhere
+			elif "(" + e.name +")!\r\n" == word:
+				if not e.hasNick:
+					for i in range(sendSplit, indexOfName):
+						e.nick += line.split(' ')[i] + " "
+					# Removes trailing whitespace
+					e.nick = e.nick.rstrip()
+					e.hasNick = True
+				return curr
+			else:
+				curr += 1
+		curr = 0
+		indexOfName += 1
+	return curr
+
 def writeTeam(filename, replay, pokes, new):
 	with open(filename, 'w' if new else 'a' ) as outfile:
 		outfile.write("Replay - " + replay + "\n\n")
@@ -43,7 +75,7 @@ def writeTeam(filename, replay, pokes, new):
 			outfile.write("Ability: " + e.ability + "\n")
 			for i in range(0, len(e.moves)):
 				outfile.write("- " + e.moves[i] + "\n")
-			for i in range(len(e.moves), 5):
+			for i in range(len(e.moves), 4):
 				outfile.write("- \n")
 			outfile.write("\n")
 
@@ -91,35 +123,7 @@ with open(filename, "r") as infile:
 		# matching opening line. Second check looks for
 		# the name of the pokemon.
 		if sendMessage == line.split(' ')[0:sendSplit]:
-			# Used to index current pokemon
-			curr = 0
-			# Used to index name of pokemon in case of nicknames
-			indexOfName = 0 
-			# Go through each word looking for the name of a pokemon
-			for word in line.split(' '):
-				for e in pokes:
-					# Checks for names without nicknames but sets
-					# nick to it's own name for easier checks
-					# later on.
-					if e.name + "!\r\n" == word:
-						e.nick = e.name
-						currentPoke = curr
-						break
-					# Names found like this mean there is a
-					# nickname somewhere
-					elif "(" + e.name +")!\r\n" == word:
-						if not e.hasNick:
-							for i in range(sendSplit, indexOfName):
-								e.nick += line.split(' ')[i] + " "
-							# Removes trailing whitespace
-							e.nick = e.nick[0:len(e.nick)-1]
-							e.hasNick = True
-						currentPoke = curr
-						break
-					else:
-						curr += 1
-				curr = 0
-				indexOfName += 1
+			currentPoke = setCurrentPoke(line, pokes, sendSplit)
 
 		# Looks to see if the current pokemon uses a new move
 		if ' '.join(attMessage) in line and " used " in line:
