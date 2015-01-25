@@ -19,6 +19,38 @@ sendMessage = [] # Message that is printed when a Pokemon is sent out
 attMessage = [] # Message that is printed when a Pokemon attacks.
 sendSplit = 0
 attSplit = 0
+replay = ""
+
+def writeTeam(filename, replay, pokes, new):
+	with open(filename, 'w' if new else 'a' ) as outfile:
+		outfile.write("Replay - " + replay + "\n\n")
+		for e in pokes:
+			if e.hasNick:
+				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
+			else:
+				outfile.write(e.name + " @ " + e.item + "\n")
+			outfile.write("Ability: " + e.ability + "\n")
+			if len(e.moves) >= 1:
+				outfile.write("- " + e.moves[0] + "\n")
+			else:
+				outfile.write("- unknown\n")
+			if len(e.moves) >= 2:
+				outfile.write("- " + e.moves[1] + "\n")
+			else:
+				outfile.write("- unknown\n")
+			if len(e.moves) >= 3:
+				outfile.write("- " + e.moves[2] + "\n")
+			else:
+				outfile.write("- unknown\n")
+			if len(e.moves) >= 4:
+				outfile.write("- " + e.moves[3] + "\n\n")
+			else:
+				outfile.write("- unknown\n\n")
+
+def appendTeam(filename, replay, pokes):
+	with open(filename, 'a') as outfile:
+		outfile.write("\n\n====================\n\n")
+	writeTeam(filename, replay, pokes, False)
 
 with open(filename, "r") as infile:
 	for line in infile:
@@ -121,53 +153,6 @@ with open(filename, "r") as infile:
 
 filename = "./" + team + "/" + rank + "/" + name + ".txt"
 if os.path.isfile(filename):
-	with open(filename, 'a') as outfile:
-		outfile.write("\n\n====================\n\n")
-		outfile.write("Replay - " + replay + "\n\n")
-		for e in pokes:
-			if e.hasNick:
-				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
-			else:
-				outfile.write(e.name + " @ " + e.item + "\n")
-			outfile.write("Ability: " + e.ability + "\n")
-			if len(e.moves) >= 1:
-				outfile.write("- " + e.moves[0] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 2:
-				outfile.write("- " + e.moves[1] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 3:
-				outfile.write("- " + e.moves[2] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 4:
-				outfile.write("- " + e.moves[3] + "\n\n")
-			else:
-				outfile.write("- unknown\n\n")
+	appendTeam(filename, replay, pokes)
 else:
-	with open(filename, 'w') as outfile:
-		outfile.write("Replay - " + replay + "\n\n")
-		for e in pokes:
-			if e.hasNick:
-				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
-			else:
-				outfile.write(e.name + " @ " + e.item + "\n")
-			outfile.write("Ability: " + e.ability + "\n")
-			if len(e.moves) >= 1:
-				outfile.write("- " + e.moves[0] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 2:
-				outfile.write("- " + e.moves[1] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 3:
-				outfile.write("- " + e.moves[2] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 4:
-				outfile.write("- " + e.moves[3] + "\n\n")
-			else:
-				outfile.write("- unknown\n\n")
+	writeTeam(filename, replay, pokes, True)
