@@ -11,6 +11,7 @@ class Poke():
 
 pokes = []
 name = raw_input( "Who do you want to track: " )
+nameLen = len(name.split(' '))
 team = raw_input( "What team is the player on: " )
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
 filename = raw_input( "Enter file to read: " )
@@ -22,12 +23,12 @@ attSplit = 0
 replay = ""
 
 def getPokeList(line, pokes):
-	pokes.append( Poke(line.split(' ')[len(name.split(' ')) +1]) )
-	pokes.append( Poke(line.split(' ')[len(name.split(' ')) +3]) )
-	pokes.append( Poke(line.split(' ')[len(name.split(' ')) +5]) )
-	pokes.append( Poke(line.split(' ')[len(name.split(' ')) +7]) )
-	pokes.append( Poke(line.split(' ')[len(name.split(' ')) +9]) )
-	pokes.append( Poke(line.split(' ')[len(name.split(' '))+11]) )
+	pokes.append( Poke(line.split(' ')[nameLen + 1]) )
+	pokes.append( Poke(line.split(' ')[nameLen + 3]) )
+	pokes.append( Poke(line.split(' ')[nameLen + 5]) )
+	pokes.append( Poke(line.split(' ')[nameLen + 7]) )
+	pokes.append( Poke(line.split(' ')[nameLen + 9]) )
+	pokes.append( Poke(line.split(' ')[nameLen +11]) )
 	#Removes \r\n from last pokemon
 	pokes[5].name = pokes[5].name.rstrip()
 
@@ -67,7 +68,7 @@ with open(filename, "r") as infile:
 				sendMessage.append( "sent" )
 				sendMessage.append( "out" )
 				# Takes into account names with spaces
-				sendSplit = len(name.split(' ')) + len(sendMessage) - 1
+				sendSplit = nameLen + len(sendMessage) - 1
 				attMessage.append("The")
 				attMessage.append("opposing")
 				attSplit = 2
@@ -80,9 +81,9 @@ with open(filename, "r") as infile:
 		# If anyone types their name with a 's and it catches again
 		# we'll only pay attention to the first 6 instances so
 		# it won't matter.
-		if len(line.split(' ')) > len(name.split(' '))-1:
-			if name.split(' ')[len(name.split(' '))-1] + "'s" == \
-			line.split(' ')[len(name.split(' '))-1]:
+		if len(line.split(' ')) > nameLen-1:
+			if name.split(' ')[nameLen-1] + "'s" == \
+			line.split(' ')[nameLen-1]:
 				getPokeList(line, pokes)
 
 		# Find the current poke. If the pattern maches,
