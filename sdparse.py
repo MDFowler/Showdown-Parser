@@ -30,22 +30,11 @@ def writeTeam(filename, replay, pokes, new):
 			else:
 				outfile.write(e.name + " @ " + e.item + "\n")
 			outfile.write("Ability: " + e.ability + "\n")
-			if len(e.moves) >= 1:
-				outfile.write("- " + e.moves[0] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 2:
-				outfile.write("- " + e.moves[1] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 3:
-				outfile.write("- " + e.moves[2] + "\n")
-			else:
-				outfile.write("- unknown\n")
-			if len(e.moves) >= 4:
-				outfile.write("- " + e.moves[3] + "\n\n")
-			else:
-				outfile.write("- unknown\n\n")
+			for i in range(0, len(e.moves)):
+				outfile.write("- " + e.moves[i] + "\n")
+			for i in range(len(e.moves), 5):
+				outfile.write("- \n")
+			outfile.write("\n")
 
 def appendTeam(filename, replay, pokes):
 	with open(filename, 'a') as outfile:
