@@ -64,6 +64,17 @@ def setCurrentPoke(line, pokes, sendSplit):
 		indexOfName += 1
 	return curr
 
+def addMove(line, pokes, currentPoke):
+	indexOfUsed = 0
+	for e in line.split(' '):
+		indexOfUsed += 1
+		if e == "used":
+			break
+	if ' '.join(line.split(' ')[indexOfUsed:]).rstrip('!\r\n') not in pokes[currentPoke].moves:
+		newMove = line.split(' ')[indexOfUsed:]
+		newMove = ' '.join(newMove).rstrip('!\r\n')
+		pokes[currentPoke].moves.append(newMove)
+
 def writeTeam(filename, replay, pokes, new):
 	with open(filename, 'w' if new else 'a' ) as outfile:
 		outfile.write("Replay - " + replay + "\n\n")
@@ -128,15 +139,7 @@ with open(filename, "r") as infile:
 		# Looks to see if the current pokemon uses a new move
 		if ' '.join(attMessage) in line and " used " in line:
 			if pokes[currentPoke].nick in line:
-				indexOfUsed = 0
-				for e in line.split(' '):
-					indexOfUsed += 1
-					if e == "used":
-						break
-				if ' '.join(line.split(' ')[indexOfUsed:]).rstrip() not in pokes[currentPoke].moves:
-					newMove = line.split(' ')[indexOfUsed:]
-					newMove = ' '.join(newMove).rstrip()
-					pokes[currentPoke].moves.append(newMove)
+				addMove(line, pokes, currentPoke)
 
 		# Gets the replay url
 		if line.split(':')[0] == "http":
