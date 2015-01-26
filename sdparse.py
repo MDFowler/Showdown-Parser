@@ -33,14 +33,14 @@ povPlayer.attSplit = 0
 name = raw_input( "What is the name of the opposing player: " )
 team = raw_input( "What team is " + name + " on: " )
 oppPlayer = Player(name, team)
-oppPlayer.sendMessage.append(oppPlayer.name)
+for i in range(0, oppPlayer.nameLen):
+	oppPlayer.sendMessage.append(oppPlayer.name.split(' ')[i])
 oppPlayer.sendMessage.append("sent")
 oppPlayer.sendMessage.append("out")
-oppPlayer.sendSplit = oppPlayer.nameLen + len(oppPlayer.sendMessage) - 1
+oppPlayer.sendSplit = len(oppPlayer.sendMessage)
 oppPlayer.attMessage.append("The")
 oppPlayer.attMessage.append("opposing")
 oppPlayer.attSplit = 2
-
 
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
 filename = raw_input( "Enter file to read: " )
@@ -163,7 +163,7 @@ with open(filename, "r") as infile:
 		if oppPlayer.sendMessage == \
 		line.split(' ')[0:oppPlayer.sendSplit]:
 			oppPlayer.currentPoke = setCurrentPoke(line, oppPlayer)
-
+			
 		# Looks to see if the current pokemon uses a new move.
 		# This could be vulnerable to tampering via chat. Will
 		# need to test, but the ":" not in line should help avoid
