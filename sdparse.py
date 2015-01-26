@@ -9,30 +9,53 @@ class Poke():
 		self.item = "unknown"
 		self.ability = "unknown"
 
-pokes = []
-name = raw_input( "Who do you want to track: " )
-nameLen = len(name.split(' '))
-team = raw_input( "What team is the player on: " )
+class Player():
+	def __init__(self, name, team):
+		self.name = name
+		# The number of words in the player's name
+		self.nameLen = len(name.split(' '))
+		self.pokes = []
+		self.currentPoke = 0
+		self.team = team
+		self.sendMessage = []
+		self.sendSplit = 0
+		self.attMessage = []
+		self.attSplit = 0
+
+name = raw_input( "What is the name of the player with POV: " )
+team = raw_input( "What team is " + name + " on: " )
+povPlayer = Player(name, team)
+povPlayer.sendMessage.append("Go!")
+povPlayer.sendSplit = 1
+povPlayer.attMessage.append("")
+povPlayer.attSplit = 0
+
+name = raw_input( "What is the name of the opposing player: " )
+team = raw_input( "What team is " + name + " on: " )
+oppPlayer = Player(name, team)
+oppPlayer.sendMessage.append(oppPlayer.name)
+oppPlayer.sendMessage.append("sent")
+oppPlayer.sendMessage.append("out")
+oppPlayer.sendSplit = oppPlayer.nameLen + len(oppPlayer.sendMessage) - 1
+oppPlayer.attMessage.append("The")
+oppPlayer.attMessage.append("opposing")
+oppPlayer.attSplit = 2
+
+
 rank = raw_input( "What rank is the battle? (grunt/admin/leader): " )
 filename = raw_input( "Enter file to read: " )
-currentPoke = 0 # Index for current Pokemon
-sendMessage = [] # Message that is printed when a Pokemon is sent out
-attMessage = [] # Message that is printed when a Pokemon attacks.
-sendSplit = 0
-attSplit = 0
 replay = ""
 
-def getPokeList(line, pokes):
-	pokes.append( Poke(line.split(' ')[nameLen + 1]) )
-	pokes.append( Poke(line.split(' ')[nameLen + 3]) )
-	pokes.append( Poke(line.split(' ')[nameLen + 5]) )
-	pokes.append( Poke(line.split(' ')[nameLen + 7]) )
-	pokes.append( Poke(line.split(' ')[nameLen + 9]) )
-	pokes.append( Poke(line.split(' ')[nameLen +11]) )
-	#Removes \r\n from last pokemon
-	pokes[5].name = pokes[5].name.rstrip()
+def getPokeList(line, player):
+	pokeList = line.split(":")[1].split('/')
+	player.pokes.append( Poke(pokeList[0].strip()) )
+	player.pokes.append( Poke(pokeList[1].strip()) )
+	player.pokes.append( Poke(pokeList[2].strip()) )
+	player.pokes.append( Poke(pokeList[3].strip()) )
+	player.pokes.append( Poke(pokeList[4].strip()) )
+	player.pokes.append( Poke(pokeList[5].strip()) )
 
-def setCurrentPoke(line, pokes, sendSplit):
+def setCurrentPoke(line, player):
 	# Used to index current pokemon
 	curr = 0
 	# Used to index name of pokemon in case of nicknames
@@ -40,45 +63,63 @@ def setCurrentPoke(line, pokes, sendSplit):
 	# Go through each word looking for the name of a pokemon
 	# We go through by word instead of looking at the last word
 	# so that we can find the length of nicknames with indexOfName
+	# We also set nicknames to their normal names so that finding
+	# moves used is easier.
 	for word in line.split(' '):
-		for e in pokes:
-			# Checks for names without nicknames but sets
-			# nick to it's own name for easier checks
-			# later on.
-			if e.name + "!\r\n" == word:
+		for e in player.pokes:
+			# This section only applies to Mr. Mime and Mime Jr.
+			# As they are the only Pokemon with 2 word names.
+			# Should probably find a way to clean this up and not
+			# have the code be split/duplicated.
+			if len(e.name.split(' ')) > 1:
+				if e.name.split(' ')[1] + "!\r\n" == word:
+					e.nick = e.name
+					return curr
+				# Names found like this mean there is a
+				# nickname somewhere
+				elif e.name.split(' ')[1] +")!\r\n" == word:
+					if not e.hasNick:
+						for i in range(player.sendSplit, indexOfName-1):
+							e.nick += line.split(' ')[i] + " "
+						# Removes trailing whitespace
+						e.nick = e.nick.rstrip()
+						e.hasNick = True
+					return curr
+			# This section applies to all other Pokemon
+			elif e.name + "!\r\n" == word:
 				e.nick = e.name
 				return curr
 			# Names found like this mean there is a
 			# nickname somewhere
 			elif "(" + e.name +")!\r\n" == word:
 				if not e.hasNick:
-					for i in range(sendSplit, indexOfName):
+					for i in range(player.sendSplit, indexOfName):
 						e.nick += line.split(' ')[i] + " "
 					# Removes trailing whitespace
 					e.nick = e.nick.rstrip()
 					e.hasNick = True
 				return curr
-			else:
-				curr += 1
+			curr += 1
 		curr = 0
 		indexOfName += 1
+	print "Couldn't find the right Pokemon in " + line
 	return curr
 
-def addMove(line, pokes, currentPoke):
+def addMove(line, player):
 	indexOfUsed = 0
 	for e in line.split(' '):
 		indexOfUsed += 1
 		if e == "used":
 			break
-	if ' '.join(line.split(' ')[indexOfUsed:]).rstrip('!\r\n') not in pokes[currentPoke].moves:
+	if ' '.join(line.split(' ')[indexOfUsed:]).rstrip('!\r\n') not in player.pokes[player.currentPoke].moves:
 		newMove = line.split(' ')[indexOfUsed:]
 		newMove = ' '.join(newMove).rstrip('!\r\n')
-		pokes[currentPoke].moves.append(newMove)
+		player.pokes[player.currentPoke].moves.append(newMove)
 
-def writeTeam(filename, replay, pokes, new):
+def writeTeam(filename, replay, player, new):
 	with open(filename, 'w' if new else 'a' ) as outfile:
 		outfile.write("Replay - " + replay + "\n\n")
-		for e in pokes:
+		for e in player.pokes:
 			if e.hasNick:
 				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
 			else:
@@ -90,63 +131,65 @@ def writeTeam(filename, replay, pokes, new):
 				outfile.write("- \n")
 			outfile.write("\n")
 
-def appendTeam(filename, replay, pokes):
+def appendTeam(filename, replay, player):
 	with open(filename, 'a') as outfile:
 		outfile.write("\n\n====================\n\n")
-	writeTeam(filename, replay, pokes, False)
+	writeTeam(filename, replay, player, False)
 
 with open(filename, "r") as infile:
 	for line in infile:
-		# Determines if the player has POV by looking for the phrase
-		# Battle bewtween PlayerA and PlayerB started!
-		# If we find name at index 2, then they have POV.		
-		if line.split(' ')[0:2] == ['Battle', 'between']:
-			if line.split(' ')[2] == name:
-				sendMessage.append("Go!")
-				sendSplit = 1
-				attMessage.append("")
-				attSplit = 0
-			else:
-				sendMessage.append(name)
-				sendMessage.append( "sent" )
-				sendMessage.append( "out" )
-				# Takes into account names with spaces
-				sendSplit = nameLen + len(sendMessage) - 1
-				attMessage.append("The")
-				attMessage.append("opposing")
-				attSplit = 2
+		# Tries to find the players' last word in their name with a
+		# 's after it. By finding this at the earliest index we find
+		# the line of text with the list of pokemon.	
+		if povPlayer.name.split(' ')[povPlayer.nameLen-1] + "'s" == \
+		line.split(' ')[povPlayer.nameLen-1]:
+			getPokeList(line, povPlayer)
+		if oppPlayer.name.split(' ')[oppPlayer.nameLen-1] + "'s" == \
+		line.split(' ')[oppPlayer.nameLen-1]:
+			getPokeList(line, oppPlayer)
+		
+		# By looking for the send messages in the begginning of the
+		# lines, we can find when Pokemon are switched out.
+		# The function then searches the line to find the name and
+		# nickname of the pokemon being sent out.
+		if povPlayer.sendMessage == \
+		line.split(' ')[0:povPlayer.sendSplit]:
+			povPlayer.currentPoke = setCurrentPoke(line, povPlayer)
 
-		# Looks for list of name's pokemon and stores them.
-		# Have to make the line you check is at least as long as
-		# the player's name. Then if the player has a name with
-		# multiple words, just check the last one for the 's.
-		# Should catch the first instance as the team immediately.
-		# If anyone types their name with a 's and it catches again
-		# we'll only pay attention to the first 6 instances so
-		# it won't matter.
-		if len(line.split(' ')) > nameLen-1:
-			if name.split(' ')[nameLen-1] + "'s" == \
-			line.split(' ')[nameLen-1]:
-				getPokeList(line, pokes)
+		if oppPlayer.sendMessage == \
+		line.split(' ')[0:oppPlayer.sendSplit]:
+			oppPlayer.currentPoke = setCurrentPoke(line, oppPlayer)
 
-		# Find the current poke. If the pattern maches,
-		# it's a switch line. First check looks for the
-		# matching opening line. Second check looks for
-		# the name of the pokemon.
-		if sendMessage == line.split(' ')[0:sendSplit]:
-			currentPoke = setCurrentPoke(line, pokes, sendSplit)
+		# Looks to see if the current pokemon uses a new move.
+		# This could be vulnerable to tampering via chat. Will
+		# need to test, but the ":" not in line should help avoid
+		# it.
+		if ' '.join(povPlayer.attMessage) in line and \
+		" used " in line and ":" not in line:
+			if povPlayer.pokes[povPlayer.currentPoke].nick in line:
+				addMove(line, povPlayer)
 
-		# Looks to see if the current pokemon uses a new move
-		if ' '.join(attMessage) in line and " used " in line:
-			if pokes[currentPoke].nick in line:
-				addMove(line, pokes, currentPoke)
+		if ' '.join(oppPlayer.attMessage) in line and \
+		" used " in line and ":" not in line:
+			if oppPlayer.pokes[oppPlayer.currentPoke].nick in line:
+				addMove(line, oppPlayer)
 
 		# Gets the replay url
 		if line.split(':')[0] == "http":
 			replay = line.rstrip()
 
-filename = "./" + team + "/" + rank + "/" + name + ".txt"
+filename = \
+"./" + povPlayer.team + "/" + rank + "/" + povPlayer.name + ".txt"
+
 if os.path.isfile(filename):
-	appendTeam(filename, replay, pokes)
+	appendTeam(filename, replay, povPlayer)
 else:
-	writeTeam(filename, replay, pokes, True)
+	writeTeam(filename, replay, povPlayer, True)
+
+filename = \
+"./" + oppPlayer.team + "/" + rank + "/" + oppPlayer.name + ".txt"
+
+if os.path.isfile(filename):
+	appendTeam(filename, replay, oppPlayer)
+else:
+	writeTeam(filename, replay, oppPlayer, True)
