@@ -99,6 +99,8 @@ def setCurrentPoke(line, player):
 					e.nick = e.nick.rstrip()
 					e.hasNick = True
 				return curr
+			elif "(" + e.name + "-Mega)!\r\n" == word:
+				return curr
 			curr += 1
 		curr = 0
 		indexOfName += 1
@@ -140,13 +142,15 @@ with open(filename, "r") as infile:
 	for line in infile:
 		# Tries to find the players' last word in their name with a
 		# 's after it. By finding this at the earliest index we find
-		# the line of text with the list of pokemon.	
-		if povPlayer.name.split(' ')[povPlayer.nameLen-1] + "'s" == \
-		line.split(' ')[povPlayer.nameLen-1]:
-			getPokeList(line, povPlayer)
-		if oppPlayer.name.split(' ')[oppPlayer.nameLen-1] + "'s" == \
-		line.split(' ')[oppPlayer.nameLen-1]:
-			getPokeList(line, oppPlayer)
+		# the line of text with the list of pokemon.
+		if len(line.split(' ')) > povPlayer.nameLen-1:
+			if povPlayer.name.split(' ')[povPlayer.nameLen-1] + "'s" == \
+			line.split(' ')[povPlayer.nameLen-1]:
+				getPokeList(line, povPlayer)
+		if len(line.split(' ')) > oppPlayer.nameLen-1:
+			if oppPlayer.name.split(' ')[oppPlayer.nameLen-1] + "'s" == \
+			line.split(' ')[oppPlayer.nameLen-1]:
+				getPokeList(line, oppPlayer)
 		
 		# By looking for the send messages in the begginning of the
 		# lines, we can find when Pokemon are switched out.
