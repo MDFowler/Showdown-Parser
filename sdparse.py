@@ -107,6 +107,20 @@ def setCurrentPoke(line, player):
 	print "Couldn't find the right Pokemon in " + line
 	return curr
 
+def getPhazedPoke(line, player):
+	curr = 0
+	for e in player.pokes:
+		if e.name + " " in line:
+			e.nick = e.name
+			return curr
+		elif "(" + e.name + ")" in line:
+			if not e.hasNick:
+				e.nick = line.split('(')[0].rstrip()
+				e.hasNick = True
+			return curr
+		curr += 1
+	return 0
+
 def addMove(line, player):
 	indexOfUsed = 0
 	for e in line.split(' '):
@@ -139,6 +153,8 @@ def appendTeam(filename, replay, player):
 	writeTeam(filename, replay, player, False)
 
 with open(filename, "r") as infile:
+	prevLine = ""
+	twoLinesBack = ""
 	for line in infile:
 		# Tries to find the players' last word in their name with a
 		# 's after it. By finding this at the earliest index we find
@@ -163,24 +179,37 @@ with open(filename, "r") as infile:
 		if oppPlayer.sendMessage == \
 		line.split(' ')[0:oppPlayer.sendSplit]:
 			oppPlayer.currentPoke = setCurrentPoke(line, oppPlayer)
-			
+
 		# Looks to see if the current pokemon uses a new move.
 		# This could be vulnerable to tampering via chat. Will
 		# need to test, but the ":" not in line should help avoid
 		# it.
-		if ' '.join(povPlayer.attMessage) in line and \
-		" used " in line and ":" not in line:
-			if povPlayer.pokes[povPlayer.currentPoke].nick in line:
-				addMove(line, povPlayer)
+		if " used " in line and ":" not in line:
+			if ' '.join(oppPlayer.attMessage) in line:
+				#print oppPlayer.pokes[oppPlayer.currentPoke].nick
+				if oppPlayer.pokes[oppPlayer.currentPoke].nick in line:
+					addMove(line, oppPlayer)
+			else:
+				if povPlayer.pokes[povPlayer.currentPoke].nick in line:
+					addMove(line, povPlayer)
 
-		if ' '.join(oppPlayer.attMessage) in line and \
-		" used " in line and ":" not in line:
-			if oppPlayer.pokes[oppPlayer.currentPoke].nick in line:
-				addMove(line, oppPlayer)
+		if "was dragged out!" in line and ":" not in line:
+			if " used " in prevLine:
+				if "The opposing" in prevLine:
+					povPlayer.currentPoke = getPhazedPoke(line, povPlayer)
+				else:
+					oppPlayer.currentPoke = getPhazedPoke(line, oppPlayer)
+			elif " used " in twoLinesBack:
+				if "The opposing" in twoLinesBack:
+					povPlayer.currentPoke = getPhazedPoke(line, povPlayer)
+				else:
+					oppPlayer.currentPoke = getPhazedPoke(line, oppPlayer)
 
 		# Gets the replay url
 		if line.split(':')[0] == "http":
 			replay = line.rstrip()
+		twoLinesBack = prevLine
+		prevLine = line
 
 filename = \
 "./" + povPlayer.team + "/" + rank + "/" + povPlayer.name + ".txt"
