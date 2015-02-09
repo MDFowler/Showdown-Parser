@@ -137,7 +137,7 @@ def writeTeam(filename, replay, player, new):
 		outfile.write("Replay - " + replay + "\n\n")
 		for e in player.pokes:
 			if e.hasNick:
-				outfile.write(e.name + " (" + e.nick + ") @ " + e.item + "\n")
+				outfile.write(e.nick + " (" + e.name + ") @ " + e.item + "\n")
 			else:
 				outfile.write(e.name + " @ " + e.item + "\n")
 			outfile.write("Ability: " + e.ability + "\n")
