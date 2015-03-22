@@ -38,8 +38,12 @@ Icon
 
 #My ignores
 *.txt
+*.db
+aqua/
 arcadia/
 dimsun/
+igneous/
 magma/
+rocket/
 snagem/
 solartrinity/
